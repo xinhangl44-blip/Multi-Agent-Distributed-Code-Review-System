@@ -10,21 +10,15 @@ from sentence_transformers import SentenceTransformer
 from fastembed import SparseTextEmbedding
 
 app = FastAPI(title="Multi-Agent RAG Hybrid Retrieval Service (Go Version)")
-
-# 1. 基础模型初始化与预热
 os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 embedding_model = SentenceTransformer("BAAI/bge-base-en-v1.5")
 sparse_model = SparseTextEmbedding(model_name="Qdrant/bm25")
-
-# 🦾 战略同步：放弃 6334 gRPC，通过 url 参数完全锁死 6333 纯 HTTP 通道
-print("正在连接 Qdrant 纯 HTTP 稳定通道 (127.0.0.1:6333)...")
+print("Connecting to Qdrant via HTTP connection (127.0.0.1:6333)...")
 qdrant_client = QdrantClient(
     url="http://127.0.0.1:6333",
     check_compatibility=False
 )
 COLLECTION_NAME = "test_code_collection"
-
-# 消除冷启动长尾延迟
 for _ in range(3):
     _ = embedding_model.encode("warmup")
     _ = list(sparse_model.embed(["warmup"]))
@@ -35,7 +29,6 @@ class SearchRequest(BaseModel):
     query: str
     limit: Optional[int] = 5
     file_path: Optional[str] = None
-    # 🦾 关键对齐：默认漏斗条件全部切换为真实落库的 Go 属性，允许传 None 进行松绑测试
     language: Optional[str] = "go"
     repo_source: Optional[str] = "kube-gpu-scheduler"
 
@@ -51,15 +44,12 @@ async def record_latency_baseline(request, call_next):
 @app.post("/retrieve")
 async def retrieve_code(req: SearchRequest):
     try:
-        # 生成双路向量
         dense_vector = embedding_model.encode(req.query).tolist()
         sparse_res = list(sparse_model.embed([req.query]))[0]
         sparse_vector = SparseVector(
             indices=sparse_res.indices.tolist(),
             values=sparse_res.values.tolist()
         )
-
-        # 🦾 坚守元数据过滤：当参数不为 None 时执行硬过滤，毫米级精确定位 Go 函数
         filter_conditions = []
         if req.language:
             filter_conditions.append(FieldCondition(key="language", match=MatchValue(value=req.language)))
@@ -67,10 +57,7 @@ async def retrieve_code(req: SearchRequest):
             filter_conditions.append(FieldCondition(key="repo_source", match=MatchValue(value=req.repo_source)))
         if req.file_path:
             filter_conditions.append(FieldCondition(key="file_path", match=MatchValue(value=req.file_path)))
-
         query_filter = Filter(must=filter_conditions) if filter_conditions else None
-
-        # 双路混合检索 (RRF 融合)
         search_response = qdrant_client.query_points(
             collection_name=COLLECTION_NAME,
             prefetch=[
@@ -80,7 +67,6 @@ async def retrieve_code(req: SearchRequest):
             query=FusionQuery(fusion=Fusion.RRF),
             limit=req.limit
         )
-
         results = []
         for hit in search_response.points:
             results.append({
@@ -91,7 +77,6 @@ async def retrieve_code(req: SearchRequest):
                 "code_snippet": hit.payload.get("code_snippet")
             })
         return {"status": "success", "data": results}
-
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
