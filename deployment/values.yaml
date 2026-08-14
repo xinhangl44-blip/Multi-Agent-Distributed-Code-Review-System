@@ -1,13 +1,12 @@
-# values.yaml
 replicaCount: 1
 config:
   cluster:
-    enabled: false # 单节点模式，节省内存
+    enabled: false 
   storage:
     performance_bootstrap: true
 persistence:
   enabled: true
-  storageClassName: "local-path" # k3s 自带的默认轻量存储
+  storageClassName: "local-path"
   size: 10Gi
 resources:
   limits:
