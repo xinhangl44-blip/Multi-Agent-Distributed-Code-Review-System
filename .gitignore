@@ -1,0 +1,143 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# =========================
+# Jupyter / IPython
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Environment / Secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+*.pem
+*.key
+*.crt
+
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+
+# =========================
+# Runtime / temporary files
+# =========================
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+.DS_Store
+
+# =========================
+# Model checkpoints / weights
+# =========================
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# QLoRA / HuggingFace local outputs
+critic_qlora_local_adapter/
+checkpoints/
+outputs/
+
+# =========================
+# HuggingFace / ML caches
+# =========================
+.cache/
+huggingface/
+transformers_cache/
+hf_cache/
+
+# =========================
+# Vector DB / local databases
+# =========================
+qdrant_storage/
+*.db
+*.sqlite
+*.sqlite3
+
+# =========================
+# Kafka local data
+# =========================
+kafka-data/
+kafka-logs/
+
+# Kafka distribution / archives
+*.tar
+*.tar.gz
+*.tgz
+
+# =========================
+# Benchmark / experiment outputs
+# =========================
+benchmark_results/
+evaluation_results/
+results/
+artifacts/
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# OS
+# =========================
+Thumbs.db
+.DS_Store
+
+# =========================
+# Go
+# =========================
+bin/
+*.test
+coverage.out
+coverage.html
+
+# =========================
+# Terraform / infrastructure state
+# =========================
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# =========================
+# Local Kubernetes / Helm
+# =========================
+*.local.yaml
+*.local.yml
+
+# =========================
+# Secrets accidentally placed
+# in Kubernetes configs
+# =========================
+*-secret.yaml
+*-secret.yml
+secret.yaml
+secret.ymlv*:Zone.Identifier
