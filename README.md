@@ -200,12 +200,6 @@ The chaos test validates at-least-once semantics across leader failover:
 4. A follower detects heartbeat timeout, wins election, reads `committed()` offset
 5. New leader seeks to the uncommitted offset and reprocesses the same task
 
-Expected output on the new leader:
-
-```
-⚡ [Node-X] 从已提交 Offset N 续读，保证 At-Least-Once。
-⚙️ [Node-X] 接收管道事件 -> 任务 ID: CHAOS-TRACK-xxxx
-```
 
 ---
 
