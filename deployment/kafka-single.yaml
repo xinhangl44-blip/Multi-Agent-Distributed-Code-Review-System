@@ -21,7 +21,6 @@ metadata:
 spec:
   kafka:
     version: 4.2.0
-    # 💡 恢复为官方名字，这样 K3s 检查本地缓存时能对得上名字
     image: quay.io/strimzi/kafka:1.1.0-kafka-4.2.0
     listeners:
       - name: plain
